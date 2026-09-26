@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>GCNDT Photos Uploader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M9 12h6M9 16h6M9 8h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M16 3v4a1 1 0 0 0 1 1h4" stroke="currentColor" stroke-width="1.8"/>
+      </svg>
+    </div>
+    <div class="header-info">
+      <h1>GCNDT Photos Uploader</h1>
+      <p class="site-tag">quantrigcn.vr.org.vn · Dev: FYJ</p>
+    </div>
+    <div class="status-dot" id="statusDot" title="Trạng thái kết nối"></div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="upload">Upload</button>
+    <button class="tab" data-tab="settings">Cài đặt</button>
+  </nav>
+
+  <!-- ═══ TAB: UPLOAD ═══ -->
+  <section class="panel active" id="tab-upload">
+
+    <!-- Cảnh báo trạng thái trang GCN -->
+    <div class="notice" id="noticeNoTab">
+      ⏳ Đang kiểm tra kết nối với trang Quản lý file…
+    </div>
+
+    <!-- Thư mục nguồn + nút Quét ngay -->
+    <div class="scan-box">
+      <div class="scan-folder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="folder-icon">
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="folder-path" id="folderPath">Chưa chọn thư mục ảnh</span>
+      </div>
+      <div class="scan-actions">
+        <button class="btn-scan-folder" id="btnScanFolder" title="Chọn cả thư mục và tự động lọc ảnh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.8"/>
+            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Chọn & Quét
+        </button>
+        <!-- input chọn thư mục chuẩn với webkitdirectory và directory -->
+        <input type="file" id="folderInput" accept="image/*" webkitdirectory directory multiple hidden />
+        <!-- input chọn file thủ công -->
+        <button class="btn-manual" id="btnManual" title="Chọn thêm file ảnh lẻ">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <input type="file" id="fileInput" accept="image/*" multiple hidden />
+      </div>
+    </div>
+
+    <!-- Kết quả quét -->
+    <div class="scan-summary" id="scanSummary" hidden>
+      <span id="scanMsg"></span>
+      <button class="btn-text" id="btnClearQueue">Xóa hết</button>
+    </div>
+
+    <!-- Queue -->
+    <div id="queueWrap" hidden>
+      <div class="queue-bar">
+        <span class="queue-label">Sẵn sàng upload: <span class="badge" id="badgeTotal">0</span></span>
+        <span class="queue-stats">
+          <span class="ok-count" id="okCount"></span>
+          <span class="skip-count" id="skipCount" hidden></span>
+          <span class="batch-count" id="batchCount" hidden></span>
+        </span>
+      </div>
+      <ul class="file-list" id="fileList"></ul>
+    </div>
+
+    <!-- Nút Upload -->
+    <button class="btn-upload" id="btnUpload" disabled>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <path d="M12 15V3m0 0L8 7m4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span id="btnUploadText">Upload</span>
+    </button>
+
+    <!-- Kết quả upload -->
+    <div class="result-box" id="resultBox" hidden>
+      <div class="result-msg" id="resultMsg"></div>
+      <ul class="result-list" id="resultList"></ul>
+    </div>
+
+  </section>
+
+  <!-- ═══ TAB: CÀI ĐẶT ═══ -->
+  <section class="panel" id="tab-settings">
+
+    <div class="section-block">
+      <div class="section-title">Kiểm tra tên file</div>
+      <div class="row-setting">
+        <div class="row-info">
+          <span class="row-name">Lọc ký tự "bs"</span>
+          <span class="row-desc">Bỏ qua / đổi tên nếu file có chứa "bs"</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="filterBs" checked /><span class="knob"></span></label>
+      </div>
+      <div class="row-setting">
+        <div class="row-info">
+          <span class="row-name">Chống trùng tên theo ngày</span>
+          <span class="row-desc">So sánh với danh sách đã upload thành công hôm nay</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="checkDuplicate" checked /><span class="knob"></span></label>
+      </div>
+      <div class="row-setting">
+        <div class="row-info">
+          <span class="row-name">Phân biệt hoa / thường</span>
+          <span class="row-desc">abc.jpg ≠ ABC.jpg</span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="caseSensitive" /><span class="knob"></span></label>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Khi vi phạm quy tắc</div>
+      <div class="row-setting">
+        <span class="row-name">Hành động</span>
+        <select class="sel" id="errorAction">
+          <option value="skip">Bỏ qua file đó</option>
+          <option value="rename">Tự đổi tên (Xóa bs / Thêm prefix)</option>
+        </select>
+      </div>
+      <div class="row-setting" id="prefixRow">
+        <span class="row-name">Prefix đổi tên</span>
+        <input type="text" class="inp" id="renamePrefix" value="copy_" placeholder="copy_" />
+      </div>
+    </div>
+
+    <button class="btn-save" id="btnSave">Lưu cài đặt</button>
+
+  </section>
+
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

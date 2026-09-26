@@ -1,0 +1,5 @@
+# Release archives (uploaded directly to GitHub Releases)
+gcn-uploader-v*.zip
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,8 @@
+{
+  "version": "1.01",
+  "author": "FYJ",
+  "force": true,
+  "notes": "v1.01 - Phát triển bởi FYJ - Tự động upload ảnh lên quantrigcn.vr.org.vn/quan-ly-file",
+  "download_url": "https://github.com/vtpham87/gcn-uploader/releases/latest/download/gcn-uploader.zip",
+  "min_edge_version": "110"
+}
